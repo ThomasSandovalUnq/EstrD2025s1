@@ -205,7 +205,7 @@ superaA (Pok Planta _) (Pok Agua _) = True
 superaA pok1 pok2 = False
 
 --b.
-cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> InT
+cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 cantidadDePokemonDe tipo (E _ pok1 pok2) = (contarSiEsDeTipo tipo pok1) + (contarSiEsDeTipo tipo pok2)
 
 contarSiEsDeTipo  :: TipoDePokemon -> Pokemon -> Int
