@@ -79,6 +79,12 @@ data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domi
 primeroYUltimoDia :: (DiaDeSemana, DiaDeSemana)
 primeroYUltimoDia = (Lunes, Domingo)
 
+primerDia :: DiaDeSemana -> DiaDeSemana
+primerDia d = Lunes
+
+ultimoDia :: DiaDeSemana -> DiaDeSemana
+ultimoDia d = Domingo
+
 --b.
 empiezaConM :: DiaDeSemana -> Bool
 empiezaConM Martes = True
@@ -100,9 +106,7 @@ numeracionDelDia Domingo   = 7
 
 --d.
 estaEnElMedio :: DiaDeSemana -> Bool
-estaEnElMedio Lunes = False
-estaEnElMedio Domingo = False
-estaEnElMedio dia = True
+estaEnElMedio d1 = (1< numeracionDelDia d1 && numeracionDelDia d1 <7)
 
 --3.a.
 negar :: Bool -> Bool
@@ -111,21 +115,18 @@ negar False = True
 
 --b.
 implica :: Bool -> Bool -> Bool
-implica bool1 bool2 = if (bool1 == True && bool2 == False)
-                        then False
-                        else True
+implica False bool2 = True
+implica True bool2  = False
 
 --c.
 yTambien :: Bool -> Bool -> Bool
-yTambien bool1 bool2 = if (bool1 == True && bool2 == True)
-                        then True
-                        else False
+yTambien False bool2 = False
+yTambien bool1 bool2 = True
 
 --d.
 oBien :: Bool -> Bool -> Bool
-oBien bool1 bool2 = if (bool1 == False && bool2 == False)
-                    then False
-                    else True
+oBien True bool2  = True
+oBien bool1 bool2 = False
 
 --Ejercicio 4
 
