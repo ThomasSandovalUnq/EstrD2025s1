@@ -77,7 +77,13 @@ data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domi
 
 --a.
 primeroYUltimoDia :: (DiaDeSemana, DiaDeSemana)
-primeroYUltimoDia = (Lunes, Domingo)
+primeroYUltimoDia = (primerDia, ultimoDia)
+
+primerDia :: DiaDeSemana
+primerDia = Lunes
+
+ultimoDia :: DiaDeSemana
+ultimoDia = Domingo
 
 --b.
 empiezaConM :: DiaDeSemana -> Bool
@@ -100,9 +106,7 @@ numeracionDelDia Domingo   = 7
 
 --d.
 estaEnElMedio :: DiaDeSemana -> Bool
-estaEnElMedio Lunes = False
-estaEnElMedio Domingo = False
-estaEnElMedio dia = True
+estaEnElMedio d1 = (1< numeracionDelDia d1 && numeracionDelDia d1 <7)
 
 --3.a.
 negar :: Bool -> Bool
@@ -111,21 +115,18 @@ negar False = True
 
 --b.
 implica :: Bool -> Bool -> Bool
-implica bool1 bool2 = if (bool1 == True && bool2 == False)
-                        then False
-                        else True
+implica False bool2 = True
+implica True bool2  = bool2
 
 --c.
 yTambien :: Bool -> Bool -> Bool
-yTambien bool1 bool2 = if (bool1 == True && bool2 == True)
-                        then True
-                        else False
+yTambien False bool2 = False
+yTambien True bool2 = bool2
 
 --d.
 oBien :: Bool -> Bool -> Bool
-oBien bool1 bool2 = if (bool1 == False && bool2 == False)
-                    then False
-                    else True
+oBien True bool2  = True
+oBien False bool2 = bool2
 
 --Ejercicio 4
 
@@ -171,7 +172,7 @@ data Pokemon = Pok TipoDePokemon Int
         deriving Show
 
 data TipoDePokemon = Agua | Fuego | Planta
-        deriving (Show, Eq)
+        deriving Show
 
 data Entrenador = E String Pokemon Pokemon
         deriving Show
@@ -209,9 +210,15 @@ cantidadDePokemonDe :: TipoDePokemon -> Entrenador -> Int
 cantidadDePokemonDe tipo (E _ pok1 pok2) = (contarSiEsDeTipo tipo pok1) + (contarSiEsDeTipo tipo pok2)
 
 contarSiEsDeTipo  :: TipoDePokemon -> Pokemon -> Int
-contarSiEsDeTipo tipo (Pok t _) = if (tipo == t)
+contarSiEsDeTipo tipo1 (Pok t _) = if (sonElMismoTipo tipo1 t)
                                 then 1
                                 else 0 
+
+sonElMismoTipo :: TipoDePokemon -> TipoDePokemon -> Bool
+sonElMismoTipo Agua Agua = True
+sonElMismoTipo Fuego Fuego = True
+sonElMismoTipo Planta Planta = True
+sonElMismoTipo tipo1 tipo2 = False
 
 --c.
 juntarPokemon :: (Entrenador, Entrenador) -> [Pokemon]
