@@ -77,13 +77,13 @@ data DiaDeSemana = Lunes | Martes | Miercoles | Jueves | Viernes | Sabado | Domi
 
 --a.
 primeroYUltimoDia :: (DiaDeSemana, DiaDeSemana)
-primeroYUltimoDia = (primerDia, ultimoDia)
+primeroYUltimoDia = (Lunes, Domingo)
 
-primerDia :: DiaDeSemana
-primerDia = Lunes
+primerDia :: DiaDeSemana -> DiaDeSemana
+primerDia d = Lunes
 
-ultimoDia :: DiaDeSemana
-ultimoDia = Domingo
+ultimoDia :: DiaDeSemana -> DiaDeSemana
+ultimoDia d = Domingo
 
 --b.
 empiezaConM :: DiaDeSemana -> Bool
