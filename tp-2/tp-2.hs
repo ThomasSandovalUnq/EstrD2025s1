@@ -1,1 +1,59 @@
+--PRACTICA 2
 
+--EJERCICIO 1
+--1. 
+sumatoria :: [Int] -> Int
+sumatoria []     = 0
+sumatoria (x:xs) = x + sumatoria xs
+
+--2.
+longitud :: [a] -> Int
+longitud [] = 0
+longitud (x:xs) = 1 + longitud xs
+
+--3.
+sucesores :: [Int] -> [Int]
+sucesores []     = []
+sucesores (x:xs) = (x + 1) : sucesores xs
+
+--4.
+conjuncion :: [Bool] -> Bool
+conjuncion []        = True
+conjuncion (x:xs) = (x && conjuncion xs)
+
+--5.
+disyuncion :: [Bool] -> Bool
+disyuncion []     = False
+disyuncion (x:xs) = x || disyuncion xs 
+
+--6. 
+aplanar :: [[a]] -> [a]
+--PRECOND: LAS LISTAS DENTRO DE LA LISTA DE LISTAS, DEBEN SER DEL MISMO TIPO 
+aplanar []       = []
+aplanar (x:xs) = x ++ aplanar xs
+
+--7.
+pertenece :: Eq a => a -> [a] -> Bool
+pertenece _ []     = False
+pertenece e (x:xs) = (e == x) || pertenece e xs
+
+--8.
+apariciones :: Eq a => a -> [a] -> Int
+apariciones _ []     = 0
+apariciones e (x:xs) = if (e == x)
+                        then 1 + apariciones e xs
+                        else apariciones e xs
+
+--9.
+losMenoresA :: Int -> [Int] -> [Int]
+losMenoresA _ []     = []
+losMenoresA n (x:xs) = if (n > x)
+                        then x : losMenoresA n xs
+                        else losMenoresA n xs
+
+--10.
+lasDeLongitudMayorA :: Int -> [[a]] -> [[a]]
+lasDeLongitudMayorA _ []     = []
+lasDeLongitudMayorA n (x:xs) = if (longitud x > n)
+                                then x : lasDeLongitudMayorA n xs
+                                else lasDeLongitudMayorA n xs
