@@ -28,7 +28,6 @@ disyuncion (x:xs) = x || disyuncion xs
 
 --6. 
 aplanar :: [[a]] -> [a]
---PRECOND: LAS LISTAS DENTRO DE LA LISTA DE LISTAS, DEBEN SER DEL MISMO TIPO 
 aplanar []       = []
 aplanar (x:xs) = x ++ aplanar xs
 
@@ -57,3 +56,39 @@ lasDeLongitudMayorA _ []     = []
 lasDeLongitudMayorA n (x:xs) = if (longitud x > n)
                                 then x : lasDeLongitudMayorA n xs
                                 else lasDeLongitudMayorA n xs
+
+--11.
+agregarAlFinal :: [a] -> a -> [a]
+agregarAlFinal xs x = xs ++ [x]
+
+--12.
+agregar :: [a] -> [a] -> [a]
+agregar []  ys  = []
+agregar (x:xs) ys = x : agregar xs ys
+
+--13.
+reversa :: [a] -> [a]
+reversa []     = []
+reversa (x:xs) = agregarAlFinal(reversa xs) x
+
+--14.
+zipMaximos :: [Int] -> [Int] -> [Int]
+zipMaximos [] _          = []
+zipMaximos _ []          = []
+zipMaximos (x:xs) (y:ys) = if x>y
+                            then x : zipMaximos xs ys
+                            else y : zipMaximos xs ys
+
+--15.
+elMinimo :: Ord a => [a] -> a
+elMinimo [x]     = x
+elMinimo (x:xs) = if (x < elMinimo xs)
+                    then x
+                    else elMinimo xs
+
+--EJERCICIO 2
+--1.
+factorial :: Int -> Int
+factorial 0    = 0
+factorial 1    = 1
+factorial n    = n * (factorial (n-1))                    
