@@ -91,4 +91,30 @@ elMinimo (x:xs) = if (x < elMinimo xs)
 factorial :: Int -> Int
 factorial 0    = 0
 factorial 1    = 1
-factorial n    = n * (factorial (n-1))                    
+factorial n    = if ( n <= (-1))
+                then error "NO PUEDE HACERSE CON NEGATIVOS"
+                else n * (factorial (n-1))
+
+--2.
+cuentaRegresiva :: Int -> [Int]
+cuentaRegresiva n = if (n >= 1)
+                    then n : (cuentaRegresiva (n-1))
+                    else []
+
+--3.
+repetir :: Int -> a -> [a]
+repetir n x = if ( n <= 0 )
+                then []
+                else x : (repetir (n-1) x)
+
+--4.
+losPrimeros :: Int -> [a] -> [a]
+losPrimeros 0 _     = []
+losPrimeros _ []     = []
+losPrimeros n (x:xs) = x : losPrimeros (n-1) xs
+
+--5.
+sinLosPrimeros :: Int -> [a] -> [a]
+sinLosPrimeros 0 xs     = xs
+sinLosPrimeros _ []     = []
+sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
