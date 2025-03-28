@@ -118,3 +118,138 @@ sinLosPrimeros :: Int -> [a] -> [a]
 sinLosPrimeros 0 xs     = xs
 sinLosPrimeros _ []     = []
 sinLosPrimeros n (x:xs) = sinLosPrimeros (n-1) xs
+
+--EJERCICIO 3
+--1.
+data Persona = P String Int
+    deriving Show
+
+juancho :: Persona
+juancho = P "Juan Carlos" 32
+
+orfeo :: Persona
+orfeo = P "Orfeo" 100
+
+arsene :: Persona
+arsene = P "Arsene" 150
+
+mayoresA :: Int -> [Persona] -> [Persona]
+mayoresA _ []     = []
+mayoresA n (x:xs) = if (esMayorA n x)
+                    then x : mayoresA n xs 
+                    else mayoresA n xs
+
+esMayorA :: Int -> Persona -> Bool
+esMayorA n (P _ e) = e > n
+
+promedioEdad :: [Persona] -> Int
+--PRECOND: la lista al menos posee una persona.
+promedioEdad []     = error "LA LISTA NO PUEDE SER VACIA" 
+promedioEdad xs = div (sumatoria (edadesDe xs)) (longitud xs)
+
+edadesDe :: [Persona] -> [Int]
+edadesDe []     = []
+edadesDe ((P _ e):xs) = e : edadesDe xs
+
+elMasViejo :: [Persona] -> Persona
+--PRECOND: la lista al menos posee una persona.
+elMasViejo []     = error "LA LISTA NO PUEDE SER VACIA"
+elMasViejo [x]    = x
+elMasViejo (x:xs) = if ( edad x >= edad (elMasViejo xs))
+                    then x
+                    else elMasViejo xs
+
+edad :: Persona -> Int
+edad (P _ e) = e    
+
+--2.
+
+data TipoDePokemon = Agua | Fuego | Planta
+    deriving Show
+
+data Pokemon = ConsPokemon TipoDePokemon Int
+    deriving Show
+
+data Entrenador = ConsEntrenador String [Pokemon]
+    deriving Show
+
+entrenadorFidel :: Entrenador
+entrenadorFidel = ConsEntrenador "Fidel" [bulbazur, charmander,charmander,charmander,charmander,charmander, squirtle]
+
+entrenadorAsh :: Entrenador
+entrenadorAsh = ConsEntrenador "Ash Ketchup" [bulbazur, bulbazur]
+
+charmander :: Pokemon
+charmander = ConsPokemon Fuego 100
+
+bulbazur :: Pokemon
+bulbazur = ConsPokemon Planta 100
+
+squirtle :: Pokemon
+squirtle = ConsPokemon Agua 100
+
+cantPokemon :: Entrenador -> Int
+cantPokemon entrenador = longitud (pokemonesDe entrenador)
+
+pokemonesDe :: Entrenador -> [Pokemon]
+pokemonesDe (ConsEntrenador _ poks) = poks
+
+cantPokemonDe :: TipoDePokemon -> Entrenador -> Int
+cantPokemonDe tipo (ConsEntrenador _ poks) = cantidadDePokemonesDeTipoEn tipo poks
+
+cantidadDePokemonesDeTipoEn :: TipoDePokemon -> [Pokemon] -> Int
+cantidadDePokemonesDeTipoEn _ []        = 0
+cantidadDePokemonesDeTipoEn tipo (x:xs) = ( contarSiEsDeTipo tipo x ) + (cantidadDePokemonesDeTipoEn tipo xs)
+
+contarSiEsDeTipo  :: TipoDePokemon -> Pokemon -> Int
+contarSiEsDeTipo tipo (ConsPokemon t _) = if (sonElMismoTipo tipo t)
+                                then 1
+                                else 0 
+
+sonElMismoTipo :: TipoDePokemon -> TipoDePokemon -> Bool
+sonElMismoTipo Agua Agua = True
+sonElMismoTipo Fuego Fuego = True
+sonElMismoTipo Planta Planta = True
+sonElMismoTipo tipo1 tipo2 = False
+
+cuantosDeTipo_De_LeGananATodosLosDe_ :: TipoDePokemon -> Entrenador -> Entrenador -> Int
+cuantosDeTipo_De_LeGananATodosLosDe_ tipo entrenador1 entrenador2 = longitud(pokemonesGanadoresDeTipo_De_A_ tipo entrenador1 entrenador2)
+
+pokemonesGanadoresDeTipo_De_A_ :: TipoDePokemon -> Entrenador -> Entrenador -> [Pokemon]
+pokemonesGanadoresDeTipo_De_A_ t (ConsEntrenador _ poks1) (ConsEntrenador _ poks2) = ganadoresDeTipo_De_A_ t poks1 poks2
+
+ganadoresDeTipo_De_A_ :: TipoDePokemon -> [Pokemon] -> [Pokemon] -> [Pokemon]
+ganadoresDeTipo_De_A_ _  _ []    = []
+ganadoresDeTipo_De_A_ _ [] _     = []
+ganadoresDeTipo_De_A_ t (x:xs) ys = if ( esPokemon_DeTipo_GanadorContra_ x t ys )
+                                    then x : (ganadoresDeTipo_De_A_ t xs ys) 
+                                    else ganadoresDeTipo_De_A_ t xs ys
+
+esPokemon_DeTipo_GanadorContra_ :: Pokemon -> TipoDePokemon -> [Pokemon] -> Bool
+esPokemon_DeTipo_GanadorContra_ pok t poks = (sonElMismoTipo (tipo pok) t) && (pokemon_lesGanaATodos_ pok poks)
+
+pokemon_lesGanaATodos_ :: Pokemon -> [Pokemon] -> Bool
+pokemon_lesGanaATodos_ _ [] = True
+pokemon_lesGanaATodos_ pokP (y:ys) = (superaA pokP y) && (pokemon_lesGanaATodos_ pokP ys) 
+
+tipo :: Pokemon -> TipoDePokemon
+tipo (ConsPokemon tipo _) = tipo 
+
+superaA :: Pokemon -> Pokemon -> Bool
+superaA (ConsPokemon Agua _) (ConsPokemon Fuego _) = True
+superaA (ConsPokemon Fuego _) (ConsPokemon Planta _) = True
+superaA (ConsPokemon Planta _) (ConsPokemon Agua _) = True
+superaA pok1 pok2 = False
+
+esMaestroPokemon :: Entrenador -> Bool
+esMaestroPokemon (ConsEntrenador _ poks) = perteneceAlTipo_UnoDe_ Agua (tiposDe poks) && 
+                                           perteneceAlTipo_UnoDe_ Fuego (tiposDe poks) && 
+                                           perteneceAlTipo_UnoDe_ Planta (tiposDe poks)
+
+perteneceAlTipo_UnoDe_ :: TipoDePokemon -> [TipoDePokemon] -> Bool
+perteneceAlTipo_UnoDe_ _ []     = False
+perteneceAlTipo_UnoDe_ t (x:xs) = sonElMismoTipo t x || perteneceAlTipo_UnoDe_ t xs
+
+tiposDe :: [Pokemon] -> [TipoDePokemon]
+tiposDe []     = []
+tiposDe (x:xs) = tipo x : tiposDe xs                                           
