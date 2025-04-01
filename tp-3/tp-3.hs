@@ -97,3 +97,12 @@ alMenosNTesoros n (Nada c)       = alMenosNTesoros n c
 alMenosNTesoros n (Cofre objs c) = if ( hayTesoro' objs )
                                     then alMenosNTesoros (n-1) c
                                     else alMenosNTesoros n c 
+
+--d.
+cantTesorosEntre :: Int -> Int -> Camino -> Int
+--cantTesorosEntre x y camino = z
+cantTesorosEntre _ _ Fin            = 0
+cantTesorosEntre x y (Nada c)       = cantTesorosEntre x y c
+cantTesorosEntre x y (Cofre objs c) = if (pasosHastaTesoro (Cofre objs c) >= x && pasosHastaTesoro (Cofre objs c) <= y)
+                                        then 1 + cantTesorosEntre x y c
+                                        else 0
