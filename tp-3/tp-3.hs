@@ -56,29 +56,44 @@ caminoCorto' :: Camino
 caminoCorto' = Cofre [Cacharro] Fin
 
 caminoMedio :: Camino
-caminoMedio = Nada ( Nada ( Cofre [Cacharro] Fin ) )
+caminoMedio = Nada ( Nada ( Cofre [Tesoro, Cacharro] Fin ) )
+caminoMedio' :: Camino
+caminoMedio' = Nada ( Nada ( Cofre [Tesoro,Cacharro] (Cofre [Tesoro] (Nada Fin) ) ))
+
 
 --a.
 hayTesoro :: Camino -> Bool
 hayTesoro Fin                    = False  
 hayTesoro (Nada camino)          = hayTesoro camino
-hayTesoro (Cofre objetos camino) = if (hayTesoroEn objetos)
+hayTesoro (Cofre objetos camino) = if (hayTesoro' objetos)
                                     then True
                                     else hayTesoro camino
 
-hayTesoroEn :: [Objeto] -> Bool
-hayTesoroEn []     = False
-hayTesoroEn (x:xs) = if (esTesoro x)
+hayTesoro' :: [Objeto] -> Bool
+hayTesoro' []     = False
+hayTesoro' (x:xs) = if (esTesoro x)
                         then True
-                        else hayTesoroEn xs
+                        else hayTesoro' xs
 
 esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
 esTesoro _      = False
 
 --b.
+
 pasosHastaTesoro :: Camino -> Int
 --PRECOND: TIENE QUE HABER AL MENOS UN TESORO
 pasosHastaTesoro Fin            = error "TIENE QUE HABER AL MENOS UN TESORO" 
 pasosHastaTesoro (Nada c)       = 1 + (pasosHastaTesoro c)
-pasosHastaTesoro (Cofre objs c) = unoSi (not (hayTesoroEn objs)) + (pasosHastaTesoro c)
+pasosHastaTesoro (Cofre objs c) = if ( hayTesoro' objs ) 
+                                    then 0
+                                    else 1 + pasosHastaTesoro c
+
+--c.
+alMenosNTesoros :: Int -> Camino -> Bool
+alMenosNTesoros 0 _              = True
+alMenosNTesoros _ Fin            = False
+alMenosNTesoros n (Nada c)       = alMenosNTesoros n c
+alMenosNTesoros n (Cofre objs c) = if ( hayTesoro' objs )
+                                    then alMenosNTesoros (n-1) c
+                                    else alMenosNTesoros n c 
