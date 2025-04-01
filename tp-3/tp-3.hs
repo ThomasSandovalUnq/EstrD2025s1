@@ -42,3 +42,43 @@ sacar color (Bolita cr ca) = if (sonElMismoColor color cr)
 ponerN :: Int -> Color -> Celda -> Celda
 ponerN 0 color celda = celda
 ponerN n color celda = (poner color (ponerN (n-1) color celda) )
+
+--1.2
+
+data Objeto = Cacharro | Tesoro
+    deriving Show
+data Camino = Fin | Cofre [Objeto] Camino | Nada Camino
+    deriving Show
+
+caminoCorto :: Camino
+caminoCorto = Cofre [Tesoro, Cacharro] Fin
+caminoCorto' :: Camino
+caminoCorto' = Cofre [Cacharro] Fin
+
+caminoMedio :: Camino
+caminoMedio = Nada ( Nada ( Cofre [Cacharro] Fin ) )
+
+--a.
+hayTesoro :: Camino -> Bool
+hayTesoro Fin                    = False  
+hayTesoro (Nada camino)          = hayTesoro camino
+hayTesoro (Cofre objetos camino) = if (hayTesoroEn objetos)
+                                    then True
+                                    else hayTesoro camino
+
+hayTesoroEn :: [Objeto] -> Bool
+hayTesoroEn []     = False
+hayTesoroEn (x:xs) = if (esTesoro x)
+                        then True
+                        else hayTesoroEn xs
+
+esTesoro :: Objeto -> Bool
+esTesoro Tesoro = True
+esTesoro _      = False
+
+--b.
+pasosHastaTesoro :: Camino -> Int
+--PRECOND: TIENE QUE HABER AL MENOS UN TESORO
+pasosHastaTesoro Fin            = error "TIENE QUE HABER AL MENOS UN TESORO" 
+pasosHastaTesoro (Nada c)       = 1 + (pasosHastaTesoro c)
+pasosHastaTesoro (Cofre objs c) = unoSi (not (hayTesoroEn objs)) + (pasosHastaTesoro c)
