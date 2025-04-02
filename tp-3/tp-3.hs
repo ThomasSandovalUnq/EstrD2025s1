@@ -56,7 +56,7 @@ caminoCorto' :: Camino
 caminoCorto' = Cofre [Cacharro] Fin
 
 caminoMedio :: Camino
-caminoMedio = Nada ( Nada ( Cofre [Tesoro, Cacharro] Fin ) )
+caminoMedio = Nada ( Nada ( Cofre [Cacharro] Fin ) )
 caminoMedio' :: Camino
 caminoMedio' = Nada ( Nada ( Cofre [Tesoro,Cacharro] (Cofre [Tesoro] (Nada Fin) ) ))
 
@@ -65,15 +65,11 @@ caminoMedio' = Nada ( Nada ( Cofre [Tesoro,Cacharro] (Cofre [Tesoro] (Nada Fin) 
 hayTesoro :: Camino -> Bool
 hayTesoro Fin                    = False  
 hayTesoro (Nada camino)          = hayTesoro camino
-hayTesoro (Cofre objetos camino) = if (hayTesoro' objetos)
-                                    then True
-                                    else hayTesoro camino
+hayTesoro (Cofre objetos camino) = hayTesoro' objetos || hayTesoro camino
 
 hayTesoro' :: [Objeto] -> Bool
 hayTesoro' []     = False
-hayTesoro' (x:xs) = if (esTesoro x)
-                        then True
-                        else hayTesoro' xs
+hayTesoro' (x:xs) = esTesoro x || hayTesoro' xs
 
 esTesoro :: Objeto -> Bool
 esTesoro Tesoro = True
@@ -85,9 +81,7 @@ pasosHastaTesoro :: Camino -> Int
 --PRECOND: TIENE QUE HABER AL MENOS UN TESORO
 pasosHastaTesoro Fin            = error "TIENE QUE HABER AL MENOS UN TESORO" 
 pasosHastaTesoro (Nada c)       = 1 + (pasosHastaTesoro c)
-pasosHastaTesoro (Cofre objs c) = if ( hayTesoro' objs ) 
-                                    then 0
-                                    else 1 + pasosHastaTesoro c
+pasosHastaTesoro (Cofre objs c) = unoSi (hayTesoro' objs) + pasosHastaTesoro c
 
 --c.
 alMenosNTesoros :: Int -> Camino -> Bool
@@ -100,9 +94,16 @@ alMenosNTesoros n (Cofre objs c) = if ( hayTesoro' objs )
 
 --d.
 cantTesorosEntre :: Int -> Int -> Camino -> Int
---cantTesorosEntre x y camino = z
-cantTesorosEntre _ _ Fin            = 0
-cantTesorosEntre x y (Nada c)       = cantTesorosEntre x y c
-cantTesorosEntre x y (Cofre objs c) = if (pasosHastaTesoro (Cofre objs c) >= x && pasosHastaTesoro (Cofre objs c) <= y)
-                                        then 1 + cantTesorosEntre x y c
-                                        else 0
+cantTesorosEntre 0  n2 c = contarTesorosHasta n2 c
+cantTesorosEntre n1 n2 c = cantTesorosEntre (n1-1) (n2-1) (siguienteCaminoDe c)
+
+siguienteCaminoDe :: Camino -> Camino
+siguienteCaminoDe Fin         = error "NO HAY MAS CAMINO D:"
+siguienteCaminoDe (Nada c)    = c
+siguienteCaminoDe (Cofre _ c) = c
+
+contarTesorosHasta :: Int -> Camino -> Int
+contarTesorosHasta n Fin            = 0
+contarTesorosHasta n (Nada c)       = (contarTesorosHasta (n-1) c)
+contarTesorosHasta 0 (Cofre objs c) = unoSi (hayTesoro' objs)
+contarTesorosHasta n (Cofre objs c) = unoSi (hayTesoro' objs) + contarTesorosHasta (n-1) c
