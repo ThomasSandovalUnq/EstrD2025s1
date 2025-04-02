@@ -107,3 +107,60 @@ contarTesorosHasta n Fin            = 0
 contarTesorosHasta n (Nada c)       = (contarTesorosHasta (n-1) c)
 contarTesorosHasta 0 (Cofre objs c) = unoSi (hayTesoro' objs)
 contarTesorosHasta n (Cofre objs c) = unoSi (hayTesoro' objs) + contarTesorosHasta (n-1) c
+
+----
+
+--Ejercicio 2
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+
+arbolHasta5 :: Tree Int
+arbolHasta5 = (NodeT 1 (NodeT 2 (NodeT 3 (EmptyT) (EmptyT)) (NodeT 4 (EmptyT) (EmptyT))) (NodeT 5 (EmptyT) (EmptyT)))
+
+arbolVocales :: Tree Char
+arbolVocales = (NodeT 'a' (NodeT 'e' (NodeT 'i' (EmptyT) (EmptyT)) (NodeT 'o' (EmptyT) (EmptyT))) (NodeT 'u' (EmptyT) (EmptyT)))
+
+--2.1.1.
+sumarT :: Tree Int -> Int
+sumarT EmptyT          = 0
+sumarT (NodeT x t1 t2) = x + (sumarT t1) + (sumarT t2)
+
+--2.1.2.
+sizeT :: Tree a -> Int
+sizeT EmptyT          = 0
+sizeT (NodeT _ t1 t2) = 1 + (sizeT t1) + (sizeT t2)
+
+--2.1.3.
+mapDobleT :: Tree Int -> Tree Int
+mapDobleT EmptyT          = EmptyT
+mapDobleT (NodeT n t1 t2) = (NodeT (n*2) (mapDobleT t1) (mapDobleT t2) )
+
+--2.1.4.
+perteneceT :: Eq a => a -> Tree a -> Bool
+perteneceT a EmptyT          = False
+perteneceT a (NodeT x t1 t2) = (a == x) || (perteneceT a t1) || (perteneceT a t2)
+
+--2.1.5.
+aparicionesT :: Eq a => a -> Tree a -> Int
+aparicionesT a EmptyT          = 0
+aparicionesT a (NodeT x t1 t2) = unoSi (a == x) 
+                                + (aparicionesT a t1) 
+                                + (aparicionesT a t2)
+
+--2.1.6.
+leaves :: Tree a -> [a]
+leaves EmptyT          = []
+leaves (NodeT x t1 t2) = [x] ++ (leaves t1) ++ (leaves t2)
+
+--2.1.7.
+heightT :: Tree a -> Int
+heightT EmptyT          = 0
+heightT (NodeT _ t1 t2) = 1 + max (heightT t1) (heightT t2)
+
+--2.1.8.
+mirrorT :: Tree a -> Tree a
+mirrorT EmptyT          = EmptyT
+mirrorT (NodeT a t1 t2) = (NodeT a (mirrorT t2) (mirrorT t1) )
+
+--2.1.9.
