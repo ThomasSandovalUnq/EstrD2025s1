@@ -164,3 +164,17 @@ mirrorT EmptyT          = EmptyT
 mirrorT (NodeT a t1 t2) = (NodeT a (mirrorT t2) (mirrorT t1) )
 
 --2.1.9.
+toList :: Tree a -> [a]
+toList EmptyT          = []
+toList (NodeT a t1 t2) = toList t1 ++ [a] ++ toList t2
+
+--2.1.10.
+levelN :: Int -> Tree a -> [a]
+levelN _ EmptyT        = []
+levelN 0 (NodeT a _ _) = [a]  
+levelN n (NodeT a t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
+
+--2.1.11.
+listPerLevel :: Tree a -> [[a]]
+listPerLevel EmptyT = []
+listPerLevel (NodeT a t1 t2) = 
