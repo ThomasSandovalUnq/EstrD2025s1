@@ -63,7 +63,7 @@ agregarAlFinal xs x = xs ++ [x]
 
 --12.
 agregar :: [a] -> [a] -> [a]
-agregar []  ys  = []
+agregar []  ys  = ys
 agregar (x:xs) ys = x : agregar xs ys
 
 --13.
