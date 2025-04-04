@@ -177,4 +177,11 @@ levelN n (NodeT a t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 --2.1.11.
 listPerLevel :: Tree a -> [[a]]
 listPerLevel EmptyT = []
-listPerLevel (NodeT a t1 t2) = 
+listPerLevel (NodeT a t1 t2) = [[a]] ++ unirNiveles (listPerLevel t1) (listPerLevel t2)
+
+unirNiveles :: [[a]] -> [[a]] -> [[a]]
+unirNiveles [] yss         = yss
+unirNiveles xss []         = xss
+unirNiveles (xs:xss) (ys:yss) = (xs ++ ys) : unirNiveles xss yss
+
+--2.1.12.
