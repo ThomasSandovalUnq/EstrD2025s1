@@ -116,7 +116,7 @@ data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
     deriving Show
 
 arbolHasta5 :: Tree Int
-arbolHasta5 = (NodeT 1 (NodeT 2 (NodeT 3 (EmptyT) (EmptyT)) (NodeT 4 (EmptyT) (EmptyT))) (NodeT 5 (EmptyT) (EmptyT)))
+arbolHasta5 = (NodeT 1 (NodeT 2 (NodeT 3 (EmptyT) (EmptyT)) (NodeT 4 (NodeT 6 (EmptyT) (EmptyT)) (EmptyT))) (NodeT 5 (EmptyT) (EmptyT)))
 
 arbolVocales :: Tree Char
 arbolVocales = (NodeT 'a' (NodeT 'e' (NodeT 'i' (EmptyT) (EmptyT)) (NodeT 'o' (EmptyT) (EmptyT))) (NodeT 'u' (EmptyT) (EmptyT)))
@@ -177,7 +177,7 @@ levelN n (NodeT a t1 t2) = levelN (n-1) t1 ++ levelN (n-1) t2
 --2.1.11.
 listPerLevel :: Tree a -> [[a]]
 listPerLevel EmptyT = []
-listPerLevel (NodeT a t1 t2) = [[a]] ++ unirNiveles (listPerLevel t1) (listPerLevel t2)
+listPerLevel (NodeT a t1 t2) = [a] : unirNiveles (listPerLevel t1) (listPerLevel t2)
 
 unirNiveles :: [[a]] -> [[a]] -> [[a]]
 unirNiveles [] yss         = yss
@@ -185,3 +185,24 @@ unirNiveles xss []         = xss
 unirNiveles (xs:xss) (ys:yss) = (xs ++ ys) : unirNiveles xss yss
 
 --2.1.12.
+ramaMasLarga :: Tree a -> [a]
+ramaMasLarga EmptyT          = []
+ramaMasLarga (NodeT a t1 t2) = a : (ramaMasLargaEntre (ramaMasLarga t1)  (ramaMasLarga t2))
+
+ramaMasLargaEntre :: [a] -> [a] -> [a]
+ramaMasLargaEntre [] ys = ys
+ramaMasLargaEntre xs [] = xs
+ramaMasLargaEntre xs ys = if (length xs > length ys)
+                            then xs
+                            else ys
+
+--2.1.13.
+--Dado un árbol devuelve todos los caminos, es decir, los caminos desde la raíz hasta cualquiera de los nodos.
+--ATENCIÓN: se trata de todos los caminos, y no solamente de los maximales (o sea, de la raíz hasta la hoja)                            
+todosLosCaminos :: Tree a -> [[a]]
+todosLosCaminos EmptyT          = []
+todosLosCaminos (NodeT a t1 t2) = [a] : agregarACadaCamino a ((todosLosCaminos t1) ++ (todosLosCaminos t2))
+
+agregarACadaCamino :: a -> [[a]] -> [[a]]
+agregarACadaCamino _ []       = []
+agregarACadaCamino a (xs:xss) = (a : xs) : (agregarACadaCamino a xss)
