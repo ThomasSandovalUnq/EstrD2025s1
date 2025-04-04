@@ -206,3 +206,16 @@ todosLosCaminos (NodeT a t1 t2) = [a] : agregarACadaCamino a ((todosLosCaminos t
 agregarACadaCamino :: a -> [[a]] -> [[a]]
 agregarACadaCamino _ []       = []
 agregarACadaCamino a (xs:xss) = (a : xs) : (agregarACadaCamino a xss)
+
+todosLosCaminosMaximal :: Tree a -> [[a]]
+todosLosCaminosMaximal EmptyT                  = []
+todosLosCaminosMaximal (NodeT a EmptyT EmptyT) = [[a]]
+todosLosCaminosMaximal (NodeT a t1 t2)         = agregarACadaCamino a ((todosLosCaminosMaximal t1) ++ (todosLosCaminosMaximal t2))
+
+--EJERCICIO 2.2
+data ExpA = Valor Int| Sum ExpA ExpA| Prod ExpA ExpA| Neg ExpA
+
+--2.2.1. Dada una expresión aritmética devuelve el resultado evaluarla.
+--eval :: ExpA -> Int
+--eval (Valor x)     =
+--eval (Sum ex1 ex2) =
