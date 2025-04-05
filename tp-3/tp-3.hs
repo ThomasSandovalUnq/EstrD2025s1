@@ -214,8 +214,28 @@ todosLosCaminosMaximal (NodeT a t1 t2)         = agregarACadaCamino a ((todosLos
 
 --EJERCICIO 2.2
 data ExpA = Valor Int| Sum ExpA ExpA| Prod ExpA ExpA| Neg ExpA
+    deriving Show
 
 --2.2.1. Dada una expresión aritmética devuelve el resultado evaluarla.
---eval :: ExpA -> Int
---eval (Valor x)     =
---eval (Sum ex1 ex2) =
+eval :: ExpA -> Int
+eval (Valor n)      = n
+eval (Neg ex1)      = -(eval ex1)
+eval (Sum ex1 ex2)  = eval ex1 + eval ex2
+eval (Prod ex1 ex2) = eval ex1 * eval ex2
+
+{-2.2.2. Dada una expresión aritmética, la simplifica según los siguientes criterios (descritos utilizando notación matemática convencional):
+a) 0 + x = x + 0 = x
+b) 0 * x = x * 0 = 0
+c) 1 * x = x * 1 = x
+d) - (- x) = x
+-}
+
+simplificar :: ExpA -> ExpA
+simplificar (Valor n)             = (Valor n)
+simplificar (Neg (Neg (exp1)))    = simplificar exp1
+simplificar (Prod (Valor 0) exp2) = (Valor 0) 
+simplificar (Prod exp1 (Valor 0)) = (Valor 0) 
+simplificar (Prod (Valor 1) exp2) = simplificar exp2
+simplificar (Prod exp1 (Valor 1)) = simplificar exp1
+simplificar (Sum (Valor 0) exp2)  = simplificar exp2
+simplificar (Sum exp1 (Valor 0))  = simplificar exp1
