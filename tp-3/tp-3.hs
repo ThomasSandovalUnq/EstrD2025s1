@@ -151,7 +151,8 @@ aparicionesT a (NodeT x t1 t2) = unoSi (a == x)
 --2.1.6.
 leaves :: Tree a -> [a]
 leaves EmptyT          = []
-leaves (NodeT x t1 t2) = [x] ++ (leaves t1) ++ (leaves t2)
+leaves (NodeT x EmptyT EmptyT) = x:[]
+leaves (NodeT x t1 t2) = (leaves t1) ++ (leaves t2)
 
 --2.1.7.
 heightT :: Tree a -> Int
