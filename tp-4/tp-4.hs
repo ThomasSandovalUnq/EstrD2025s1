@@ -166,7 +166,9 @@ unirTesoros [] t2s            = t2s
 unirTesoros t1s []            = t1s
 unirTesoros (t1s:t1ss) (t2s:t2ss) = (t1s ++ t2s) : unirTesoros t1ss t2ss 
 
+{- La funcion de unirTesoros, use como referencia el ejercicio de listPerLevel de la practica anterior.
 unirNiveles :: [[a]] -> [[a]] -> [[a]]
 unirNiveles [] yss         = yss
 unirNiveles xss []         = xss
 unirNiveles (xs:xss) (ys:yss) = (xs ++ ys) : unirNiveles xss yss
+-}
