@@ -82,6 +82,12 @@ data Mapa = Fin Cofre| Bifurcacion Cofre Mapa Mapa
 mapaConTesoroCorto :: Mapa
 mapaConTesoroCorto = (Bifurcacion (Cofre [Chatarra]) (Fin (Cofre [Tesoro])) (Fin (Cofre [Chatarra])))
 
+mapaConTesoroMediano :: Mapa
+mapaConTesoroMediano = (Bifurcacion (Cofre [])
+                            (Fin (Cofre []))
+                            (mapaConTesoroCorto)
+                        )
+
 --1. Indica si hay un tesoro en alguna parte del mapa.
 hayTesoro :: Mapa -> Bool
 hayTesoro (Fin c)               = hayTesoroEnCofre c
@@ -172,3 +178,131 @@ unirNiveles [] yss         = yss
 unirNiveles xss []         = xss
 unirNiveles (xs:xss) (ys:yss) = (xs ++ ys) : unirNiveles xss yss
 -}
+
+-------------------------------------------------------------------------------------------------------------
+
+--6. Devuelve todos lo caminos en el mapa.
+todosLosCaminos :: Mapa -> [[Dir]]
+todosLosCaminos (Fin _)               = [[]]
+todosLosCaminos (Bifurcacion _ mi md)      = agregarACadaCamino Izq (todosLosCaminos mi) 
+                                            ++ 
+                                             agregarACadaCamino Der (todosLosCaminos md)
+
+agregarACadaCamino :: a -> [[a]] -> [[a]]
+agregarACadaCamino _ []       = []
+agregarACadaCamino a (xs:xss) = (a : xs) : (agregarACadaCamino a xss)
+
+-------------------------------------------------------------------------------------------------------------
+
+data Componente = LanzaTorpedos | Motor Int | Almacen [Barril]
+    deriving Show
+
+data Barril = Comida | Oxigeno | Torpedo | Combustible
+    deriving Show
+
+data Sector = S SectorId [Componente] [Tripulante]
+    deriving Show
+
+type SectorId = String
+
+type Tripulante = String
+
+data Tree a = EmptyT | NodeT a (Tree a) (Tree a)
+    deriving Show
+
+data Nave = N (Tree Sector)
+    deriving Show
+
+tripulanteJoker :: Tripulante
+tripulanteJoker = "Joker"
+
+tripulanteFidel :: Tripulante
+tripulanteFidel = "Fidel"
+
+almacenConComida :: Componente
+almacenConComida = (Almacen [Comida, Comida])
+
+almacenConCombustible :: Componente
+almacenConCombustible = (Almacen [Oxigeno])
+
+naveChiquita :: Nave
+naveChiquita = (N (EmptyT))
+
+naveChiquita' :: Nave
+naveChiquita' = (N (NodeT (S "A1" [almacenConComida, Motor 94] [tripulanteJoker]) 
+                        (EmptyT)
+                        (NodeT (S "B3" [almacenConCombustible, Motor 84] [tripulanteFidel]) 
+                            (EmptyT)
+                            (EmptyT))))
+
+--1. Propósito: Devuelve todos los sectores de la nave
+sectores :: Nave -> [SectorId]
+sectores (N ss) = todosLosIdsSectoresDe ss 
+
+todosLosIdsSectoresDe ::  Tree Sector -> [SectorId]
+todosLosIdsSectoresDe (EmptyT)        = []
+todosLosIdsSectoresDe (NodeT s t1 t2) = idDeSector s : (todosLosIdsSectoresDe t1 ++ todosLosIdsSectoresDe t2)
+
+idDeSector :: Sector -> String
+idDeSector (S id cs ts) = id
+
+-------------------------------------------------------------------------------------------------------------
+ 
+--2.Propósito: Devuelve la suma de poder de propulsión de todos los motores de la nave. 
+--Nota: el poder de propulsión es el número que acompaña al constructor de motores.
+poderDePropulsion :: Nave -> Int
+poderDePropulsion (N ss) = sumaDePoderDePropulsionEn ss
+
+sumaDePoderDePropulsionEn :: Tree Sector -> Int
+sumaDePoderDePropulsionEn (EmptyT)        = 0
+sumaDePoderDePropulsionEn (NodeT s t1 t2) = (poderDeMotorDelSector s) + (sumaDePoderDePropulsionEn t1) + (sumaDePoderDePropulsionEn t2)
+
+poderDeMotorDelSector :: Sector -> Int
+poderDeMotorDelSector (S _ componentes _) = poderDePropulsionEn componentes
+
+poderDePropulsionEn :: [Componente] -> Int
+poderDePropulsionEn []     = 0
+poderDePropulsionEn (c:cs) = if (esMotor c)
+                                then poderDeMotor c
+                                else poderDePropulsionEn cs
+
+poderDeMotor :: Componente -> Int
+--PRECOND: EL COMPONENTE DEBE SER UN MOTOR
+poderDeMotor (Motor n) = n
+
+esMotor :: Componente -> Bool
+esMotor (Motor _) = True
+esMotor _         = False
+
+-------------------------------------------------------------------------------------------------------------
+
+--3. Propósito: Devuelve todos los barriles de la nave
+barriles :: Nave -> [Barril]
+barriles (N ss) = todosLosBarrilesDe ss
+
+todosLosBarrilesDe :: Tree Sector -> [Barril]
+todosLosBarrilesDe (EmptyT)        = []
+todosLosBarrilesDe (NodeT s t1 t2) = barrilesDeSector s ++ (todosLosBarrilesDe t1 ++ todosLosBarrilesDe t2)
+
+barrilesDeSector :: Sector -> [Barril]
+barrilesDeSector (S _ componentes _) = barrilesDeLosComponentes componentes
+
+barrilesDeLosComponentes :: [Componente] -> [Barril]
+barrilesDeLosComponentes []     = []
+barrilesDeLosComponentes (c:cs) = if esAlmacen c 
+                                        then barrilesEnAlmacen c
+                                        else barrilesDeLosComponentes cs
+
+barrilesEnAlmacen :: Componente -> [Barril]
+--PRECOND: EL COMPONENTE DEBE SER UN BARRIL
+barrilesEnAlmacen (Almacen barriles) = barriles
+
+esAlmacen :: Componente -> Bool
+esAlmacen (Almacen _) = True
+esAlmacen _           = False
+
+-------------------------------------------------------------------------------------------------------------
+
+--4. Propósito: Añade una lista de componentes a un sector de la nave.
+--Nota: ese sector puede no existir, en cuyo caso no añade componentes
+--agregarASector :: [Componente] -> SectorId -> Nave -> Nave
