@@ -229,9 +229,9 @@ naveChiquita :: Nave
 naveChiquita = (N (EmptyT))
 
 naveChiquita' :: Nave
-naveChiquita' = (N (NodeT (S "A1" [almacenConComida, Motor 94] [tripulanteJoker]) 
+naveChiquita' = (N (NodeT (S "A1" [almacenConComida, Motor 94] [tripulanteJoker, tripulanteFidel]) 
                         (EmptyT)
-                        (NodeT (S "B3" [almacenConCombustible, Motor 84] [tripulanteFidel]) 
+                        (NodeT (S "B3" [almacenConCombustible, Motor 84] [tripulanteFidel, tripulanteJoker]) 
                             (EmptyT)
                             (EmptyT))))
 
@@ -305,4 +305,161 @@ esAlmacen _           = False
 
 --4. Propósito: Añade una lista de componentes a un sector de la nave.
 --Nota: ese sector puede no existir, en cuyo caso no añade componentes
---agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+agregarASector :: [Componente] -> SectorId -> Nave -> Nave
+agregarASector comps sid (N ss) = N (agregarComponentesEnSector comps sid ss)
+
+agregarComponentesEnSector :: [Componente] -> SectorId -> Tree Sector -> Tree Sector
+agregarComponentesEnSector cs sid (EmptyT)        = (EmptyT)
+agregarComponentesEnSector cs sid (NodeT s t1 t2) = if (idDeSector s) == sid
+                                                        then (NodeT (agregarComponentesASector cs s) 
+                                                                (agregarComponentesEnSector cs sid t1)
+                                                                (agregarComponentesEnSector cs sid t2)) 
+                                                        else (NodeT s 
+                                                            (agregarComponentesEnSector cs sid t1)
+                                                            (agregarComponentesEnSector cs sid t2))
+
+agregarComponentesASector :: [Componente] -> Sector -> Sector
+agregarComponentesASector xs (S id comps trip) = (S id (comps ++ xs) trip) 
+
+-------------------------------------------------------------------------------------------------------------
+
+--5. Propósito: Incorpora un tripulante a una lista de sectores de la nave.
+--Precondición: Todos los id de la lista existen en la nave.
+asignarTripulanteA :: Tripulante -> [SectorId] -> Nave -> Nave
+--PRECOND: TODOS LOS IDS DE LA LISTA EXISTEN EN LA NAVE.
+asignarTripulanteA trip idSectores (N ss) = (N (asignarTripulanteEn trip idSectores ss))
+
+asignarTripulanteEn :: Tripulante -> [SectorId] -> Tree Sector -> Tree Sector
+asignarTripulanteEn trip [] t                   = t
+asignarTripulanteEn _ _ (EmptyT)                = EmptyT
+asignarTripulanteEn trip xs (NodeT s t1 t2) = (NodeT (asignarTripulante trip xs s) 
+                                                    (asignarTripulanteEn trip xs t1) 
+                                                    (asignarTripulanteEn trip xs t2))
+
+asignarTripulante :: Tripulante -> [SectorId] -> Sector -> Sector
+asignarTripulante trip xs (S id comps trps) = if pertenece id xs
+                                            then (S id comps (trip:trps))
+                                            else (S id comps trps)
+
+pertenece :: Eq a => a -> [a] -> Bool
+pertenece _ []     = False
+pertenece a (x:xs) = (a == x) || (pertenece a xs)
+
+-------------------------------------------------------------------------------------------------------------
+
+--6. Propósito: Devuelve los sectores en donde aparece un tripulante dado.
+sectoresAsignados :: Tripulante -> Nave -> [SectorId]
+sectoresAsignados trip (N ss) = sectoresAsignadosDelTripulante trip ss
+
+sectoresAsignadosDelTripulante :: Tripulante -> Tree Sector -> [SectorId]
+sectoresAsignadosDelTripulante _ EmptyT             = []
+sectoresAsignadosDelTripulante trip (NodeT s t1 t2) = if (estaElTripulante trip s)
+                                                        then (idDeSector s) : (
+                                                            (sectoresAsignadosDelTripulante trip t1)
+                                                            ++
+                                                            (sectoresAsignadosDelTripulante trip t2)
+                                                        )
+                                                        else (sectoresAsignadosDelTripulante trip t1)
+                                                              ++
+                                                              (sectoresAsignadosDelTripulante trip t2)
+
+estaElTripulante :: Tripulante -> Sector -> Bool
+estaElTripulante trip (S id _ ts) = pertenece trip ts
+
+-------------------------------------------------------------------------------------------------------------
+
+--7.Propósito: Devuelve la lista de tripulantes, sin elementos repetidos.
+tripulantes :: Nave -> [Tripulante]
+tripulantes (N ss) = tripulantesEn ss
+
+tripulantesEn :: Tree Sector -> [Tripulante]
+tripulantesEn EmptyT          = []
+tripulantesEn (NodeT s t1 t2) = agregarSinRepetir (tripulantesDelSector s) (tripulantesEn t1 ++ tripulantesEn t2)
+
+tripulantesDelSector :: Sector -> [Tripulante]
+tripulantesDelSector (S _ _ trip) = trip
+
+agregarSinRepetir :: Eq a => [a] -> [a] -> [a]
+agregarSinRepetir [] ys       = ys
+agregarSinRepetir xs []       = xs
+agregarSinRepetir (x:xs) (ys) = if pertenece x ys
+                                    then agregarSinRepetir xs ys
+                                    else x : agregarSinRepetir xs ys
+
+-------------------------------------------------------------------------------------------------------------
+
+type Presa = String -- nombre de presa
+
+type Territorio = String -- nombre de territorio
+
+type Nombre = String -- nombre de lobo
+
+data Lobo = Cazador Nombre [Presa] Lobo Lobo Lobo | Explorador Nombre [Territorio] Lobo Lobo | Cria Nombre
+    deriving Show
+
+data Manada = M Lobo
+    deriving Show
+
+{-1. Construir un valor de tipo Manada que posea 1 cazador, 2 exploradores y que el resto sean
+crías. Resolver las siguientes funciones utilizando recursión estructural sobre la estructura
+que corresponda en cada caso:-}
+
+manadaP :: Manada
+manadaP = (M cazadorFidel)
+
+cazadorFidel :: Lobo
+cazadorFidel = (Cazador "Fidel" ["Sombra", "Rayo","Sombra", "Rayo","Sombra", "Rayo"] (exploradorJoker) (exploradorYu) (Cria "Thomy"))
+
+exploradorJoker :: Lobo
+exploradorJoker = (Explorador "Joker" ["VDP", "La Capilla", "Metaverso"] (Cria "Makoto") (Cria "Sumire"))
+
+exploradorYu :: Lobo
+exploradorYu = (Explorador "Yu Narukami" ["VDP", "Heaven", "TV"] (Cria "Rise") (Cria "Yukiko"))
+
+-------------------------------------------------------------------------------------------------------------
+
+--2. Propósito: dada una manada, indica si la cantidad de alimento cazado es mayor a la cantidad de crías.
+buenaCaza :: Manada -> Bool
+buenaCaza (M lbs) = (cantidadDeCazaDe lbs) > (cantidadDeCriasEn lbs) 
+
+cantidadDeCriasEn :: Lobo -> Int
+cantidadDeCriasEn (Cria _)               = 1
+cantidadDeCriasEn (Explorador _ _ l1 l2)   = (cantidadDeCriasEn l1) + (cantidadDeCriasEn l2)
+cantidadDeCriasEn (Cazador _ _ l1 l2 l3) = (cantidadDeCriasEn l1) + (cantidadDeCriasEn l2) + (cantidadDeCriasEn l3)
+
+cantidadDeCazaDe :: Lobo -> Int
+cantidadDeCazaDe (Cria _)                = 0
+cantidadDeCazaDe (Explorador _  _ l1 l2)    = (cantidadDeCazaDe l1) + (cantidadDeCazaDe l2)
+cantidadDeCazaDe (Cazador _ ps l1 l2 l3) = (longitud ps) + (cantidadDeCazaDe l1) + (cantidadDeCazaDe l2) + (cantidadDeCazaDe l3)
+
+longitud :: [a] -> Int
+longitud []     = 0
+longitud (x:xs) = 1 + longitud xs
+
+-------------------------------------------------------------------------------------------------------------
+
+--3. Propósito: dada una manada, devuelve el nombre del lobo con más presas cazadas, junto
+--con su cantidad de presas. Nota: se considera que los exploradores y crías tienen cero presas
+--cazadas, y que podrían formar parte del resultado si es que no existen cazadores con más de
+--cero presas.
+
+elAlfa :: Manada -> (Nombre, Int)
+elAlfa (M lbs) = elLoboMasCazador lbs
+
+elLoboMasCazador :: Lobo -> (Nombre, Int)
+elLoboMasCazador (Cria n) = (n, 0)
+elLoboMasCazador (Explorador n _ l1 l2) = elMasCazadorEntre (n,0) (elMasCazadorEntre (elLoboMasCazador l1) (elLoboMasCazador l2))
+elLoboMasCazador (Cazador n ps l1 l2 l3) = elMasCazadorEntre (n,(longitud ps)) (elMasCazadorEntre(elMasCazadorEntre (elLoboMasCazador l1) 
+                                                                                                                    (elLoboMasCazador l2))
+                                                                                    (elLoboMasCazador l3))
+
+elMasCazadorEntre :: (Nombre, Int) -> (Nombre, Int) -> (Nombre, Int)
+elMasCazadorEntre (n1, x) (n2, y) = if x > y
+                                        then (n1, x)
+                                        else (n2, y)
+
+-------------------------------------------------------------------------------------------------------------
+
+--4.Propósito: dado un territorio y una manada, devuelve los nombres de los exploradores que pasaron por dicho territorio
+
+--losQueExploraron :: Territorio -> Manada -> [Nombre]
