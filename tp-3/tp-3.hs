@@ -234,9 +234,12 @@ d) - (- x) = x
 simplificar :: ExpA -> ExpA
 simplificar (Valor n)             = (Valor n)
 simplificar (Neg (Neg (exp1)))    = simplificar exp1
+simplificar (Neg exp1) = Neg (simplificar exp1)
 simplificar (Prod (Valor 0) exp2) = (Valor 0) 
 simplificar (Prod exp1 (Valor 0)) = (Valor 0) 
 simplificar (Prod (Valor 1) exp2) = simplificar exp2
 simplificar (Prod exp1 (Valor 1)) = simplificar exp1
+simplificar (Prod exp1 exp2) = Prod (simplificar exp1) (simplificar exp2)
 simplificar (Sum (Valor 0) exp2)  = simplificar exp2
 simplificar (Sum exp1 (Valor 0))  = simplificar exp1
+simplificar (Sum exp1 exp2) = Sum (simplificar exp1) (simplificar exp2)
