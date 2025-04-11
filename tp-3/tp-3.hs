@@ -78,23 +78,39 @@ esTesoro _      = False
 --b.
 
 pasosHastaTesoro :: Camino -> Int
---PRECOND: TIENE QUE HABER AL MENOS UN TESORO
+--PRECND: TIENE QUE HABER AL MENOS UN TESORO
 pasosHastaTesoro Fin            = error "TIENE QUE HABER AL MENOS UN TESORO" 
 pasosHastaTesoro (Nada c)       = 1 + (pasosHastaTesoro c)
-pasosHastaTesoro (Cofre objs c) = unoSi (hayTesoro' objs) + pasosHastaTesoro c
+pasosHastaTesoro (Cofre objs c) = if hayTesoro' objs
+                                    then 0
+                                    else 1 + pasosHastaTesoro c
 
---c.
+--c. Indica si hay un tesoro en una cierta cantidad exacta de pasos. Por ejemplo, si el número de
+--pasos es 5, indica si hay un tesoro en 5 pasos
+
+hayTesoroEn :: Int -> Camino -> Bool
+hayTesoroEn n (Fin)          = False
+hayTesoroEn n (Nada c)       = hayTesoroEn (n-1) c
+hayTesoroEn n (Cofre objs c) = if n == 0
+                                then hayTesoro' objs
+                                else hayTesoroEn (n-1) c
+ 
+--d.
 alMenosNTesoros :: Int -> Camino -> Bool
 alMenosNTesoros 0 _              = True
 alMenosNTesoros _ Fin            = False
 alMenosNTesoros n (Nada c)       = alMenosNTesoros n c
-alMenosNTesoros n (Cofre objs c) = if ( hayTesoro' objs )
-                                    then alMenosNTesoros (n-1) c
-                                    else alMenosNTesoros n c 
+alMenosNTesoros n (Cofre objs c) = alMenosNTesoros (n-(contarTesoros objs)) c
 
---d.
+contarTesoros :: [Objeto] -> Int
+contarTesoros [] = 0
+contarTesoros (t:ts) = unoSi(esTesoro t) + contarTesoros ts
+contarTesoros (_:ts) = contarTesoros ts                                    
+
+--e.
 cantTesorosEntre :: Int -> Int -> Camino -> Int
 cantTesorosEntre 0  n2 c = contarTesorosHasta n2 c
+cantTesorosEntre _ _ Fin = 0
 cantTesorosEntre n1 n2 c = cantTesorosEntre (n1-1) (n2-1) (siguienteCaminoDe c)
 
 siguienteCaminoDe :: Camino -> Camino
@@ -108,7 +124,7 @@ contarTesorosHasta n (Nada c)       = (contarTesorosHasta (n-1) c)
 contarTesorosHasta 0 (Cofre objs c) = unoSi (hayTesoro' objs)
 contarTesorosHasta n (Cofre objs c) = unoSi (hayTesoro' objs) + contarTesorosHasta (n-1) c
 
-----
+----------------------------------------------------------------------------------------------------
 
 --Ejercicio 2
 
@@ -234,12 +250,12 @@ d) - (- x) = x
 simplificar :: ExpA -> ExpA
 simplificar (Valor n)             = (Valor n)
 simplificar (Neg (Neg (exp1)))    = simplificar exp1
-simplificar (Neg exp1) = Neg (simplificar exp1)
+simplificar (Neg exp1)            = Neg (simplificar exp1)
 simplificar (Prod (Valor 0) exp2) = (Valor 0) 
 simplificar (Prod exp1 (Valor 0)) = (Valor 0) 
 simplificar (Prod (Valor 1) exp2) = simplificar exp2
 simplificar (Prod exp1 (Valor 1)) = simplificar exp1
-simplificar (Prod exp1 exp2) = Prod (simplificar exp1) (simplificar exp2)
+simplificar (Prod exp1 exp2)      = Prod (simplificar exp1) (simplificar exp2)
 simplificar (Sum (Valor 0) exp2)  = simplificar exp2
 simplificar (Sum exp1 (Valor 0))  = simplificar exp1
-simplificar (Sum exp1 exp2) = Sum (simplificar exp1) (simplificar exp2)
+simplificar (Sum exp1 exp2)       = Sum (simplificar exp1) (simplificar exp2)
