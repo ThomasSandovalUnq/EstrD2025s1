@@ -111,18 +111,18 @@ contarTesoros (_:ts) = contarTesoros ts
 cantTesorosEntre :: Int -> Int -> Camino -> Int
 cantTesorosEntre 0  n2 c = contarTesorosHasta n2 c
 cantTesorosEntre _ _ Fin = 0
-cantTesorosEntre n1 n2 c = cantTesorosEntre (n1-1) (n2-1) (siguienteCaminoDe c)
+cantTesorosEntre n1 n2 c = cantTesorosEntre (n1 - 1) (n2 - 1) (siguienteCaminoDe c)
 
 siguienteCaminoDe :: Camino -> Camino
-siguienteCaminoDe Fin         = error "NO HAY MAS CAMINO D:"
+siguienteCaminoDe Fin         = Fin
 siguienteCaminoDe (Nada c)    = c
 siguienteCaminoDe (Cofre _ c) = c
 
 contarTesorosHasta :: Int -> Camino -> Int
 contarTesorosHasta n Fin            = 0
 contarTesorosHasta n (Nada c)       = (contarTesorosHasta (n-1) c)
-contarTesorosHasta 0 (Cofre objs c) = unoSi (hayTesoro' objs)
-contarTesorosHasta n (Cofre objs c) = unoSi (hayTesoro' objs) + contarTesorosHasta (n-1) c
+contarTesorosHasta 0 (Cofre objs c) = contarTesoros objs
+contarTesorosHasta n (Cofre objs c) = (contarTesoros objs) + contarTesorosHasta (n-1) c
 
 ----------------------------------------------------------------------------------------------------
 
