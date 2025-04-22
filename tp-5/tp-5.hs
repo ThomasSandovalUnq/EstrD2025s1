@@ -70,11 +70,15 @@ in m : ordenar (sacar m xs) --O(n^2)
 -}
 
 {-===================================================
-    SETV1
+    SET
 ===================================================-}
+
+--imports
 
 import SetV1
 --import SetV2
+--import QueueV1
+import QueueV2
 
 setVacio :: Set a
 setVacio = emptyS
@@ -114,35 +118,9 @@ unirTodos :: Eq a => Tree (Set a) -> Set a
 unirTodos EmptyT            = emptyS
 unirTodos (NodeT set ai ad) = unionS set (unionS (unirTodos ai) (unirTodos ad))
 
-{-3. Implementar la variante del tipo abstracto Set que posee una lista y admite repetidos. En
-otras palabras, al agregar no va a chequear que si el elemento ya se encuentra en la lista, pero
-sí debe comportarse como Set ante el usuario (quitando los elementos repetidos al pedirlos,
-por ejemplo). Contrastar la eficiencia obtenida en esta implementación con la anterior.-}
+{-===================================================
+    QUEUE
+===================================================-}
 
-{-
-La eficiencia que se obtiene en la nueva implementacion de SetV2 es mas ineficiente que la de SetV1, ya que al agregar todos los elementos
-sin necesidad de sacar a los repetidos, ya que en el addS tardarian lo mismo aproximadamente, para hacer la union debo de hacer una eleccion 
-para cuando pongo, o no, si hay un elemento que se repite muchas veces en el Set y lo quiero sacar, este va a sacarlo todas las veces
-que aparezca, por lo tanto la eficiencia de SetV2 es menor a la de SetV1.
--}
-
-{-
-3. Queue (cola)
-Una Queue es un tipo abstracto de datos de naturaleza FIFO (rst in, rst out). Esto signica
-que los elementos salen en el orden con el que entraron, es decir, el que se agrega primero es el
-primero en salir (como la cola de un banco). Su interfaz es la siguiente:
-emptyQ :: Queue a
-Crea una cola vacía.
-isEmptyQ :: Queue a -> Bool
-Dada una cola indica si la cola está vacía.
-enqueue :: a -> Queue a -> Queue a
-Dados un elemento y una cola, agrega ese elemento a la cola.
-firstQ :: Queue a -> a
-Dada una cola devuelve el primer elemento de la cola.
-dequeue :: Queue a -> Queue a
-Dada una cola la devuelve sin su primer elemento.
-1. Implemente el tipo abstracto Queue utilizando listas. Los elementos deben encolarse por el
-nal de la lista y desencolarse por delante
--}
-
-import QueueO
+queueFacil :: Queue Int
+queueFacil = enqueue 10 (enqueue 1 (emptyQ))
