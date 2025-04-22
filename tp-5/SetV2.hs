@@ -22,7 +22,7 @@ belongs a (S xs n)       = pertenece a xs
 sizeS (S xs n)           = n
 removeS a (S xs n)       = sacarElemento a xs n
 unionS (S xs n) (S ys m) = unificarListas xs ys
-setToList (S xs n)       = xs
+setToList (S xs n)       = elementosSinRepetir xs
 
 agregar :: Eq a => a -> Set a -> Set a
 agregar a set = if belongs a set
@@ -36,15 +36,23 @@ pertenece :: Eq a => a -> [a] -> Bool
 pertenece _ [] = False
 pertenece a (x:xs) = a == x || pertenece a xs
 
+elementosSinRepetir :: Eq a => [a] -> [a]
+elementosSinRepetir []     = []
+elementosSinRepetir (x:xs) = if (pertenece x xs)
+                                then elementosSinRepetir xs
+                                else x : (elementosSinRepetir xs)
+
 sacarElemento :: Eq a => a -> [a] -> Int -> Set a
 sacarElemento _ [] _     = (S [] 0)
 sacarElemento a (x:xs) n = if a == x
                             then (sacarElemento a xs (n-1))
-                            else (sacarElemento a xs n)
+                            else addS x (sacarElemento a xs n)
 
 unificarListas :: Eq a => [a] -> [a] -> Set a
 unificarListas [] ys     = S ys (length ys)
-unificarListas (x:xs) ys = addS x (unificarListas xs ys)
+unificarListas (x:xs) ys = if pertenece x ys
+                                then (unificarListas xs ys)
+                                else addS x (unificarListas xs ys)
 
 incrementarNumeroDe :: Set a -> Int
 incrementarNumeroDe (S xs n) = (n+1)
