@@ -40,7 +40,7 @@ elementosSinRepetir :: Eq a => [a] -> [a]
 elementosSinRepetir []     = []
 elementosSinRepetir (x:xs) = if (pertenece x xs)
                                 then elementosSinRepetir xs
-                                else x : (elementosSinRepetir xs)
+                                else x : (elementosSinRepetir xs) --O(n)
 
 sacarElemento :: Eq a => a -> [a] -> Int -> Set a
 sacarElemento _ [] _     = (S [] 0)
@@ -52,7 +52,7 @@ unificarListas :: Eq a => [a] -> [a] -> Set a
 unificarListas [] ys     = S ys (length ys)
 unificarListas (x:xs) ys = if pertenece x ys
                                 then (unificarListas xs ys)
-                                else addS x (unificarListas xs ys)
+                                else addS x (unificarListas xs ys) --O(n)
 
 incrementarNumeroDe :: Set a -> Int
 incrementarNumeroDe (S xs n) = (n+1)
