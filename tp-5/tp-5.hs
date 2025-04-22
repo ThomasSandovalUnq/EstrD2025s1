@@ -73,8 +73,8 @@ in m : ordenar (sacar m xs) --O(n^2)
     SETV1
 ===================================================-}
 
---import SetV1
-import SetV2
+import SetV1
+--import SetV2
 
 setVacio :: Set a
 setVacio = emptyS
@@ -145,3 +145,4 @@ Dada una cola la devuelve sin su primer elemento.
 nal de la lista y desencolarse por delante
 -}
 
+import QueueO
