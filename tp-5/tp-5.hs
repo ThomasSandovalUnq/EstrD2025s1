@@ -79,6 +79,7 @@ import SetV1
 --import SetV2
 import QueueV1
 --import QueueV2
+import StackV1
 
 setVacio :: Set a
 setVacio = emptyS
@@ -88,6 +89,7 @@ setFacil = addS 1 (addS 2 (addS 3 (addS 4 (addS 5 (addS 6 emptyS)))))
 
 setLoco :: Set Int
 setLoco = addS 1 (addS 1 (addS 1 (addS 1 (addS 1 (addS 1 emptyS)))))
+
 
 --2. Como usuario del tipo abstracto Set implementar las siguientes funciones:
 
@@ -167,3 +169,24 @@ unionQ q1 q2 = if isEmptyQ q2
     STACK
 ===================================================-}
 
+--Dada una lista devuelve una pila sin alterar el orden de los elementos.
+apilar :: [a] -> Stack a
+apilar []     = emptySt
+apilar (x:xs) = push x (apilar xs)
+
+--Dada una pila devuelve una lista sin alterar el orden de los elementos.
+desapilar :: Stack a -> [a]
+desapilar stack = if isEmptySt stack
+                    then []
+                    else (top stack) : (desapilar (pop stack)) 
+
+--Dada una posicion válida en la stack y un elemento, ubica dicho elemento en dicha
+--posición (se desapilan elementos hasta dicha posición y se inserta en ese lugar).
+insertarEnPos :: Int -> a -> Stack a -> Stack a
+--PRECOND: LA POSICION N EXISTE EN LA STACK
+insertarEnPos n e stack = if n == 0
+                            then push e stack
+                            else insertarEnPos (n-1) e (pop stack)
+
+stackFacil :: Stack Int
+stackFacil = push 23 (push 15(emptySt))
