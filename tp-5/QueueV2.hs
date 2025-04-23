@@ -18,9 +18,9 @@ dequeue :: Queue a -> Queue a
 emptyQ           = (Q [])
 isEmptyQ (Q xs)  = null xs
 enqueue a (Q xs) = (Q (a:xs))
-firstQ (Q xs)    = head xs
+firstQ (Q xs)    = last xs
 dequeue (Q xs)   = quitarElemento xs
 
 quitarElemento :: [a] -> Queue a
 --PRECOND: La lista no puede ser vacia
-quitarElemento (x:xs) = Q (init xs)
+quitarElemento xs = Q (init xs)

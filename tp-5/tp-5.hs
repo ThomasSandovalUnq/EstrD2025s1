@@ -77,8 +77,8 @@ in m : ordenar (sacar m xs) --O(n^2)
 
 import SetV1
 --import SetV2
---import QueueV1
-import QueueV2
+import QueueV1
+--import QueueV2
 
 setVacio :: Set a
 setVacio = emptyS
@@ -124,3 +124,46 @@ unirTodos (NodeT set ai ad) = unionS set (unionS (unirTodos ai) (unirTodos ad))
 
 queueFacil :: Queue Int
 queueFacil = enqueue 10 (enqueue 1 (emptyQ))
+
+queueFacil' :: Queue Int
+queueFacil' = enqueue 8 (enqueue 0 (enqueue (-54) (emptyQ)))
+
+{-
+LA EFICIENCIA DE AMBAS QUEUE:
+            QueueV1                         QueueV2
+emptyQ	    O(1)	                        O(1)
+isEmptyQ	O(1)	                        O(1)
+enqueue	    O(n) (por la concatenación ++)	O(1) (añadir al principio de la lista :)
+firstQ	    O(1) (head)	                    O(n) (last)
+dequeue	    O(1) (tail)	                    O(n) (init)
+
+3. Como usuario del tipo abstracto Queue implementar las siguientes funciones:
+lengthQ :: Queue a -> Int
+Cuenta la cantidad de elementos de la cola.
+queueToList :: Queue a -> [a]
+Dada una cola devuelve la lista con los mismos elementos,
+donde el orden de la lista es el de la cola.
+Nota: chequear que los elementos queden en el orden correcto.
+unionQ :: Queue a -> Queue a -> Queue a
+Inserta todos los elementos de la segunda cola en la primera.
+-}
+
+lengthQ :: Queue a -> Int
+lengthQ queue = if isEmptyQ queue
+                    then 0
+                    else 1 + (lengthQ (dequeue queue))
+
+queueToList :: Queue a -> [a]
+queueToList queue = if isEmptyQ queue
+                    then []
+                    else (firstQ queue) : queueToList (dequeue queue)
+
+unionQ :: Queue a -> Queue a -> Queue a
+unionQ q1 q2 = if isEmptyQ q2
+                then q1
+                else (enqueue (firstQ (q2)) (unionQ q1 (dequeue q2)))
+
+{-===================================================
+    STACK
+===================================================-}
+
