@@ -18,7 +18,7 @@ firstQ   :: Queue a -> a
 dequeue  :: Queue a -> Queue a
 
 emptyQ              = (Q [] [])
-isEmptyQ (Q fs bs)  = null fs && null bs
+isEmptyQ (Q fs bs)  = null fs
 enqueue a (Q fs bs) = 
 firstQ (Q fs bs)    = 
 dequeue (Q fs bs)   = 
