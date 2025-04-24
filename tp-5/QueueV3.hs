@@ -1,4 +1,4 @@
-module QueueV1
+module QueueV3
     (Queue, emptyQ, isEmptyQ, enqueue, firstQ, dequeue)
     where
 
