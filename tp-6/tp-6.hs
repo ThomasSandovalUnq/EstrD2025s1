@@ -1,6 +1,7 @@
 --PRIORITY QUEUE
 
 import PriorityQueue
+import Map
 
 --Ejercicio 1
 
@@ -31,7 +32,7 @@ extraerElementosOrdenados pq = if (isEmptyPQ pq)
 
 --Propósito: obtiene los valores asociados a cada clave del map.
 valuesM :: Eq k => Map k v -> [Maybe v] -- O(n^2)
-valuesM m = recorrer m (keys m)
+valuesM m = recorrer m (domM m)
 
 recorrer :: Eq k => Map k v -> [k] -> [Maybe v] -- O(n)
 recorrer _ []     = []
@@ -53,7 +54,7 @@ listToMap ((k,v):kvs) = assocM k v (listToMap kvs)
 
 --Propósito: convierte un map en una lista de pares clave valor.
 mapToList :: Eq k => Map k v -> [(k, v)] 
-mapToList m = completarLista m (keys m)
+mapToList m = completarLista m (domM m)
 
 completarLista :: Eq k => Map k v -> [k] -> [(k, v)]
 completarLista _ []      = []
@@ -75,18 +76,18 @@ incrementar :: Eq k => [k] -> Map k Int -> Map k Int -- O(n)
 incrementar [] _     = emptyM
 incrementar (k:ks) m = 
     case lookupM k m of
-        Just v  -> assocM k (v + 1) (incrementar ks)
+        Just v  -> assocM k (v + 1) (incrementar ks m)
         Nothing -> incrementar ks m
 
 --Propósito: dado dos maps se agregan las claves y valores del primer map en el segundo. Si
 --una clave del primero existe en el segundo, es reemplazada por la del primero.
 mergeMaps:: Eq k => Map k v -> Map k v -> Map k v -- O(n)
-mergeMaps m1 m2 = mergeAuxiliar (keys m1) m1 m2
+mergeMaps m1 m2 = mergeAuxiliar (domM m1) m1 m2
 
 mergeAuxiliar :: Eq k => [k] -> Map k v -> Map k v -> Map k v -- O(n)
 mergeAuxiliar [] _ m2      = m2
 mergeAuxiliar (k:ks) m1 m2 = 
     let v = lookupM k m1 
     in case v of
-        Just val -> mergeHelper ks m1 (assocM k val m2)
-        Nothing  -> mergeHelper ks m1 m2
+        Just val -> mergeAuxiliar ks m1 (assocM k val m2)
+        Nothing  -> mergeAuxiliar ks m1 m2
