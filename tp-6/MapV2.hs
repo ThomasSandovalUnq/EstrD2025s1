@@ -1,0 +1,45 @@
+module MapV2
+    (Map, emptyM, assocM, lookupM, deleteM, domM)
+        where
+
+data Map k v = M [(k,v)]
+{- INV.REP.: en donde [(k,v)]:
+        * el 1er valor par puede repetirse.
+        -}
+
+emptyM :: Map k v
+--Propósito: devuelve un map vacío
+
+assocM :: Eq k => k -> v -> Map k v -> Map k v
+--Propósito: agrega una asociación clave-valor al map.
+
+lookupM :: Eq k => k -> Map k v -> Maybe v
+--Propósito: encuentra un valor dado una clave.
+
+deleteM :: Eq k => k -> Map k v -> Map k v
+--Propósito: borra una asociación dada una clave.
+
+domM :: Map k v -> [k]
+--Propósito: devuelve las claves del map.
+
+emptyM             = M []
+assocM k v (M kvs) = (M ((k,v):kvs))
+lookupM k (M kvs)  = buscarLaClaveEn k kvs
+deleteM k (M kvs)  = (M (eliminar k kvs))
+domM (M kvs)       = todasLasKeysDe kvs
+
+buscarLaClaveEn :: Eq k => k -> [(k,v)] -> Maybe v
+buscarLaClaveEn _ []            = Nothing
+buscarLaClaveEn k ((k',v'):kvs) = if k == k'
+                                    then Just v'
+                                    else buscarLaClaveEn k kvs
+
+eliminar :: Eq k => k -> [(k,v)] -> [(k,v)]
+eliminar _ []            = []
+eliminar k ((k',v'):kvs) = if k == k'
+                            then eliminar k kvs
+                            else (k',v') : eliminar k kvs
+
+todasLasKeysDe :: [(k,v)] -> [k]
+todasLasKeysDe []          = []
+todasLasKeysDe ((k,_):kvs) = k : todasLasKeysDe kvs

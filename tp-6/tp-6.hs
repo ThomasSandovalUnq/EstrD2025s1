@@ -1,7 +1,10 @@
 --PRIORITY QUEUE
 
 import PriorityQueue
-import Map
+--import Map
+--import MapV2
+import MapV3
+import MultiSet
 
 --Ejercicio 1
 
@@ -91,3 +94,28 @@ mergeAuxiliar (k:ks) m1 m2 =
     in case v of
         Just val -> mergeAuxiliar ks m1 (assocM k val m2)
         Nothing  -> mergeAuxiliar ks m1 m2
+
+indexar :: [a] -> Map Int a
+indexar []    = emptyM
+indexar lista = indexar' 0 lista
+  where
+    indexar' :: Int -> [a] -> Map Int a
+    indexar' _ []     = emptyM
+    indexar' i (x:xs) = assocM i x (indexar' (i + 1) xs)
+
+ocurrencias :: String -> Map Char Int
+ocurrencias ""    = emptyM
+ocurrencias cs = actualizarOcurrencias' cs emptyM
+  where
+    actualizarOcurrencias' :: String -> Map Char Int -> Map Char Int
+    actualizarOcurrencias' [] mapa     = mapa
+    actualizarOcurrencias' (c:cs) mapa =
+      case lookupM c mapa of
+        Nothing -> actualizarOcurrencias' cs (assocM c 1 mapa)
+        Just count -> actualizarOcurrencias' cs (assocM c (count + 1) mapa)
+
+
+
+ocurrenciasMS_v2 :: String -> MultiSet Char
+ocurrenciasMS_v2 "" = emptyMS
+ocurrenciasMS_v2 (c:cs) = addMS c (ocurrenciasMS_v2 cs)
