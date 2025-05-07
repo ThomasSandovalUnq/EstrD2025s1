@@ -20,16 +20,16 @@ práctica.
 
 heapSort :: Ord a => [a] -> [a]                                 -- O(n^2)
 heapSort [] = []
-heapSort xs = construirHeapOrdenado emptyPQ xs
+heapSort xs = pqToList(listToPQ xs)
 
-construirHeapOrdenado :: Ord a => PriorityQueue a -> [a] -> [a] -- O(n)
-construirHeapOrdenado pq [] = extraerElementosOrdenados pq
-construirHeapOrdenado pq (x:xs) = construirHeapOrdenado (insertPQ x pq) xs
+listToPQ :: Ord a => [a] -> PriorityQueue a
+listToPQ []     = emptyPQ
+listToPQ (x:xs) = insertPQ x (listToPQ xs)
 
-extraerElementosOrdenados :: Ord a => PriorityQueue a -> [a]    -- O(n^2)
-extraerElementosOrdenados pq = if (isEmptyPQ pq) 
-                                    then []
-                                    else (findMinPQ pq) : extraerElementosOrdenados (deleteMinPQ pq)
+pqToList :: Ord a => PriorityQueue a -> [a]
+pqToList pq = if emptyPQ
+                then []
+                else findMin pq : (pqToList (deleteMinPQ pq))
 
 --Ejercicio 3 MAP
 
