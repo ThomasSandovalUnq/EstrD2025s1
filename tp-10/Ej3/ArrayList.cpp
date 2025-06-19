@@ -36,3 +36,37 @@ void set(int i, int x, ArrayList xs){
     xs->elementos[i] = x; 
 }
 
+void resize(int capacidad, ArrayList xs){
+    if (xs->capacidad == capacidad){
+    }
+    else {
+        ArrayList al = new ArrayListSt;
+        al->cantidad = xs->cantidad;
+        al->capacidad = capacidad;
+        al->elementos = xs->elementos;
+        delete xs;}
+}
+
+void DuplicarTamanioDeArray(ArrayList xs){
+    int* temp = new int[xs->capacidad*2];
+    for(int i=0; i<xs->capacidad; i++){
+        temp[i] = xs->elementos[i];
+    }
+    delete xs->elementos;
+    xs->capacidad = xs->capacidad*2;
+    xs->elementos = temp;
+    delete temp;
+}
+
+void add(int x, ArrayList xs){
+    if (xs->cantidad == xs->capacidad){
+        DuplicarTamanioDeArray(xs);
+    }
+    xs->elementos[xs->cantidad++] = x;
+}
+
+void remove(ArrayList xs){
+    if (xs->cantidad > 0){
+        xs->cantidad--;
+    }
+}
