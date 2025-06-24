@@ -1,14 +1,6 @@
 #include <string>
-#include "NodoL.h"
 #include "LinkedList.h"
 using namespace std;
-
-struct LinkedListSt {
-// INV.REP.: cantidad indica la cantidad de nodos que se pueden recorrer
-// desde primero por siguiente hasta alcanzar a NULL
-    int cantidad; // cantidad de elementos
-    NodoL* primero; // puntero al primer nodo
-};
 
 LinkedList nil(){
     LinkedListSt* l = new LinkedListSt;

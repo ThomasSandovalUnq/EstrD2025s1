@@ -1,7 +1,11 @@
 #include <string>
+#include "NodoL.h"
+#include "LinkedList.h"
 using namespace std;
 
-struct IteratorSt;
+struct IteratorSt {
+NodoL* current;
+};
 typedef IteratorSt* ListIterator; // INV.REP.: el puntero NO es NULL
 
 ListIterator getIterator(LinkedList xs);

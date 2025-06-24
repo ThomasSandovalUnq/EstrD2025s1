@@ -1,15 +1,11 @@
 #include "Iterator.h"
-#include "NodoL.h"
-#include "LinkedList.h"
 #include <string>
 using namespace std;
 
-struct IteratorSt {
-NodoL* current;
-};
-
 ListIterator getIterator(LinkedList xs){
-    
+    IteratorSt* ixs = new IteratorSt;
+    ixs->current = xs->primero;
+    return ixs;
 }
 
 int current(ListIterator ixs);
