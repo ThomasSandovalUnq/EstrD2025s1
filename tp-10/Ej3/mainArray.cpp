@@ -113,10 +113,7 @@ int minimo(ArrayList xs){
 
     for (int i = 1; i < lengthAL(xs); i++)
     {
-        if (min > get(i, xs))
-        {
-            min = get(i, xs);
-        }
+        if (min > get(i, xs))   { min = get(i, xs); }
     }
     return min;
 }
