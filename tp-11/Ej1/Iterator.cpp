@@ -8,13 +8,22 @@ ListIterator getIterator(LinkedList xs){
     return ixs;
 }
 
-int current(ListIterator ixs);
+int current(ListIterator ixs){
+    return ixs->current->elem;
+}
 
-void SetCurrent(int x, ListIterator ixs);
-//Reemplaza el elemento actual por otro elemento.
-void Next(ListIterator ixs);
-//Pasa al siguiente elemento.
-bool atEnd(ListIterator ixs);
-//Indica si el recorrido ha terminado.
-void DisposeIterator(ListIterator ixs);
-//Libera la memoria ocupada por el iterador.
+void SetCurrent(int x, ListIterator ixs){
+    ixs->current->elem = x;
+}
+
+void Next(ListIterator ixs){
+    ixs->current = ixs->current->siguiente;
+}
+
+bool atEnd(ListIterator ixs){
+    return ixs->current == NULL;
+}
+
+void DisposeIterator(ListIterator ixs){
+    delete ixs;
+}
