@@ -6,6 +6,7 @@ struct LinkedListSt {
 // desde primero por siguiente hasta alcanzar a NULL
     int cantidad; // cantidad de elementos
     NodoL* primero; // puntero al primer nodo
+    NodoL* ultimo;
 };
 typedef LinkedListSt* LinkedList; // INV.REP.: el puntero NO es NULL
 
@@ -25,3 +26,4 @@ void Snoc(int x, LinkedList xs);
 //Agrega un elemento al final de la lista.
 void DestroyL(LinkedList xs);
 //Libera la memoria ocupada por la lista
+void Append(LinkedList xs, LinkedList ys);
